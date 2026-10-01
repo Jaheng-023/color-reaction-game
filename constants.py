@@ -1,24 +1,26 @@
 import tkinter.font as tkfont
 
 WINDOW_TITLE = "Color Reaction Time & Stroop Task"
-WINDOW_WIDTH = 850
-WINDOW_HEIGHT = 650
+WINDOW_WIDTH = 920
+WINDOW_HEIGHT = 700
 
-COLOR_BG = "#1e1e1e"
-COLOR_CARD = "#2d2d2d"
-COLOR_TEXT = "#ffffff"
-COLOR_MUTED = "#aaaaaa"
-COLOR_ACCENT = "#4a9eff"
-COLOR_BORDER = "#3d3d3d"
-COLOR_DISABLED = "#444444"
+# Color Palette
+COLOR_BG = "#EFECE3"          # Warm Off-White / Ivory
+COLOR_CARD = "#FFFFFF"        # Pure White Card Surface
+COLOR_TEXT = "#000000"        # Deep Black Text
+COLOR_MUTED = "#555555"       # Muted Dark Gray Text
+COLOR_ACCENT = "#4A70A9"      # Slate Blue Accent
+COLOR_HIGHLIGHT = "#8FABD4"   # Soft Blue Accent
+COLOR_BORDER = "#D0CCC0"      # Subtle Border Tint
+COLOR_DISABLED = "#CCCCCC"    # Disabled State Neutral
 
 GAME_COLORS = {
-    "Red": "#e74c3c",
-    "Blue": "#3498db",
-    "Green": "#2ecc71",
-    "Yellow": "#f1c40f",
-    "Purple": "#9b59b6",
-    "Orange": "#e67e22"
+    "Red": "#E74C3C",
+    "Blue": "#3498DB",
+    "Green": "#2ECC71",
+    "Yellow": "#F1C40F",
+    "Purple": "#9B59B6",
+    "Orange": "#E67E22"
 }
 
 KEY_MAPPINGS = {
@@ -31,12 +33,12 @@ KEY_MAPPINGS = {
 }
 
 FONT_FAMILY = "Segoe UI"
-FONT_TITLE = (FONT_FAMILY, 24, "bold")
-FONT_HEADING = (FONT_FAMILY, 18, "bold")
-FONT_BODY = (FONT_FAMILY, 14)
-FONT_BUTTON = (FONT_FAMILY, 14, "bold")
-FONT_WORD = (FONT_FAMILY, 38, "bold")
-FONT_TIP = (FONT_FAMILY, 13, "italic")
+FONT_TITLE = (FONT_FAMILY, 22, "bold")
+FONT_HEADING = (FONT_FAMILY, 16, "bold")
+FONT_BODY = (FONT_FAMILY, 13)
+FONT_BUTTON = (FONT_FAMILY, 13, "bold")
+FONT_WORD = (FONT_FAMILY, 36, "bold")
+FONT_TIP = (FONT_FAMILY, 12, "italic")
 
 TOTAL_TRIALS = 20
 SIMPLE_TRIALS = 10

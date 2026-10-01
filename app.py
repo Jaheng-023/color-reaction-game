@@ -4,12 +4,12 @@ from tkinter import ttk, messagebox
 
 from constants import (
     WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, COLOR_CARD,
-    COLOR_TEXT, COLOR_MUTED, COLOR_ACCENT, GAME_COLORS, KEY_MAPPINGS,
+    COLOR_TEXT, COLOR_MUTED, COLOR_ACCENT, COLOR_BORDER, GAME_COLORS,
     FONT_TITLE, FONT_HEADING, FONT_BODY, FONT_WORD, FONT_TIP, FUNNY_TIP,
     TOTAL_TRIALS, SIMPLE_TRIALS, MIN_DELAY_MS, MAX_DELAY_MS, TIMEOUT_MS,
     FEEDBACK_DURATION_MS, AGE_GROUPS
 )
-from widgets import Card, RoundedButton, ColorSwatchButton
+from widgets import Card, RoundedButton, ColorSwatchButton, TrialHistoryStack
 from game_logic import GameLogic
 from sound import play_sound
 from data_manager import save_data
@@ -25,6 +25,7 @@ class ColorReactionGame(tk.Tk):
         self.game_logic = None
         self.swatch_buttons = []
         self.position_to_color = {}
+        self.history_stack = None
         self.timeout_timer = None
         self.delay_timer = None
         self.buttons_enabled = False
@@ -36,82 +37,83 @@ class ColorReactionGame(tk.Tk):
         self.container.pack(fill="both", expand=True)
 
         self.bind("<Key>", self.handle_keypress)
-        self.show_start_screen()
+        self.show_registration_screen()
 
     def clear_container(self):
         for widget in self.container.winfo_children():
             widget.destroy()
 
-    def show_start_screen(self):
+    def show_registration_screen(self):
         self.clear_container()
 
         card = Card(self.container)
-        card.pack(expand=True, pady=20, padx=50)
+        card.pack(expand=True, pady=40, padx=60)
 
-        title = tk.Label(card, text="Color Reaction Task", font=FONT_TITLE, fg=COLOR_TEXT, bg=COLOR_CARD)
-        title.pack(pady=(0, 10))
+        title = tk.Label(card, text="Participant Registration", font=FONT_TITLE, fg=COLOR_ACCENT, bg=COLOR_CARD)
+        title.pack(pady=(0, 20))
 
-        instructions = (
-            "Welcome! This activity measures your reaction time.\n\n"
-            "• Trials 1-10 (Simple): Match the solid color block shown in the center.\n"
-            "• Trials 11-20 (Stroop): Click the button matching the INK COLOR\n"
-            "  of the displayed word, ignoring the word text.\n\n"
-            "Option buttons are randomized every trial. Use clicks or keys 1 to 6."
-        )
-        info_label = tk.Label(card, text=instructions, font=FONT_BODY, fg=COLOR_MUTED, bg=COLOR_CARD, justify="left")
-        info_label.pack(pady=5)
+        form_frame = tk.Frame(card, bg=COLOR_CARD)
+        form_frame.pack(pady=10)
 
-        tip_label = tk.Label(card, text=FUNNY_TIP, font=FONT_TIP, fg=COLOR_ACCENT, bg=COLOR_CARD)
-        tip_label.pack(pady=5)
+        # Participant ID Input
+        pid_label = tk.Label(form_frame, text="Participant ID:", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD)
+        pid_label.grid(row=0, column=0, sticky="e", padx=10, pady=10)
 
-        input_frame = tk.Frame(card, bg=COLOR_CARD)
-        input_frame.pack(pady=10)
-
-        # Participant ID
-        pid_label = tk.Label(input_frame, text="Participant ID:", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD)
-        pid_label.grid(row=0, column=0, sticky="e", padx=5, pady=4)
-
-        self.pid_entry = tk.Entry(input_frame, font=FONT_BODY, width=12)
-        self.pid_entry.grid(row=0, column=1, sticky="w", padx=5, pady=4)
+        self.pid_entry = tk.Entry(form_frame, font=FONT_BODY, width=20, bg="#F9F8F5", fg=COLOR_TEXT, relief="solid", bd=1)
+        self.pid_entry.grid(row=0, column=1, sticky="w", padx=10, pady=10)
         self.pid_entry.focus()
 
         # Age Group Dropdown
-        age_label = tk.Label(input_frame, text="Age Group:", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD)
-        age_label.grid(row=1, column=0, sticky="e", padx=5, pady=4)
+        age_label = tk.Label(form_frame, text="Age Group:", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD)
+        age_label.grid(row=1, column=0, sticky="e", padx=10, pady=10)
 
-        self.age_combo = ttk.Combobox(input_frame, values=AGE_GROUPS, state="readonly", font=FONT_BODY, width=10)
-        self.age_combo.grid(row=1, column=1, sticky="w", padx=5, pady=4)
+        style = ttk.Style()
+        style.theme_use('clam')
+        style.configure('Custom.TCombobox', fieldbackground='#F9F8F5', background=COLOR_ACCENT, font=FONT_BODY)
+
+        self.age_combo = ttk.Combobox(
+            form_frame,
+            values=AGE_GROUPS,
+            state="readonly",
+            style='Custom.TCombobox',
+            width=18
+        )
+        self.age_combo.grid(row=1, column=1, sticky="w", padx=10, pady=10)
         self.age_combo.current(0)
 
-        # Experience Question
-        exp_label = tk.Label(input_frame, text="Have you played before?", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD)
-        exp_label.grid(row=2, column=0, sticky="e", padx=5, pady=4)
+        # Experience Question (Radio buttons unselected on open)
+        exp_label = tk.Label(form_frame, text="Have you played before?", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD)
+        exp_label.grid(row=2, column=0, sticky="e", padx=10, pady=10)
 
-        exp_radio_frame = tk.Frame(input_frame, bg=COLOR_CARD)
-        exp_radio_frame.grid(row=2, column=1, sticky="w", padx=5, pady=4)
+        exp_radio_frame = tk.Frame(form_frame, bg=COLOR_CARD)
+        exp_radio_frame.grid(row=2, column=1, sticky="w", padx=10, pady=10)
 
-        self.exp_var = tk.StringVar(value="")
+        self.exp_var = tk.StringVar(value="NONE")
+
         rb_yes = tk.Radiobutton(
             exp_radio_frame, text="Yes", value="Yes", variable=self.exp_var,
-            bg=COLOR_CARD, fg=COLOR_TEXT, selectcolor=COLOR_CARD,
+            tristatevalue="NONE", bg=COLOR_CARD, fg=COLOR_TEXT, selectcolor=COLOR_CARD,
             activebackground=COLOR_CARD, activeforeground=COLOR_TEXT, font=FONT_BODY
         )
-        rb_yes.pack(side="left", padx=5)
+        rb_yes.pack(side="left", padx=8)
 
         rb_no = tk.Radiobutton(
             exp_radio_frame, text="No", value="No", variable=self.exp_var,
-            bg=COLOR_CARD, fg=COLOR_TEXT, selectcolor=COLOR_CARD,
+            tristatevalue="NONE", bg=COLOR_CARD, fg=COLOR_TEXT, selectcolor=COLOR_CARD,
             activebackground=COLOR_CARD, activeforeground=COLOR_TEXT, font=FONT_BODY
         )
-        rb_no.pack(side="left", padx=5)
+        rb_no.pack(side="left", padx=8)
 
-        self.error_label = tk.Label(card, text="", font=FONT_BODY, fg="#e74c3c", bg=COLOR_CARD)
-        self.error_label.pack(pady=4)
+        self.error_label = tk.Label(card, text="", font=FONT_BODY, fg="#E74C3C", bg=COLOR_CARD)
+        self.error_label.pack(pady=5)
 
-        start_btn = RoundedButton(card, text="Start Task", color=COLOR_ACCENT, command=self.validate_and_start, width=160, height=45)
-        start_btn.pack(pady=5)
+        next_btn = RoundedButton(
+            card, text="Next: Instructions →", color=COLOR_ACCENT,
+            command=self.validate_registration, width=200, height=45
+        )
+        next_btn.pack(pady=15)
 
-    def validate_and_start(self):
+    def validate_registration(self):
         pid = self.pid_entry.get().strip()
         age = self.age_combo.get()
         exp = self.exp_var.get()
@@ -126,6 +128,42 @@ class ColorReactionGame(tk.Tk):
         self.age_group = age
         self.experience = exp
         self.game_logic = GameLogic(pid)
+        self.show_instructions_screen()
+
+    def show_instructions_screen(self):
+        self.clear_container()
+
+        card = Card(self.container)
+        card.pack(expand=True, pady=30, padx=50)
+
+        title = tk.Label(card, text="How to Play & Game Rules", font=FONT_TITLE, fg=COLOR_ACCENT, bg=COLOR_CARD)
+        title.pack(pady=(0, 15))
+
+        instructions = (
+            "This experiment consists of 20 quick reaction trials divided into two parts:\n\n"
+            "• Part 1 — Simple Condition (Trials 1–10):\n"
+            "  A solid color block will appear in the center card. Click the option button that matches.\n\n"
+            "• Part 2 — Stroop Condition (Trials 11–20):\n"
+            "  A color word will be displayed in colored ink. Click the button that matches the INK COLOR\n"
+            "  of the word, ignoring what the word actually says!\n\n"
+            "Option buttons shuffle position every trial. Use mouse clicks or keys 1 to 6."
+        )
+        info_label = tk.Label(card, text=instructions, font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD, justify="left")
+        info_label.pack(pady=10)
+
+        tip_card = tk.Frame(card, bg="#F2EFF8", highlightbackground=COLOR_BORDER, highlightthickness=1, padx=15, pady=10)
+        tip_card.pack(fill="x", pady=15)
+
+        tip_label = tk.Label(tip_card, text=FUNNY_TIP, font=FONT_TIP, fg=COLOR_ACCENT, bg="#F2EFF8")
+        tip_label.pack()
+
+        start_btn = RoundedButton(
+            card, text="Begin Game", color=COLOR_ACCENT,
+            command=self.start_game, width=180, height=45
+        )
+        start_btn.pack(pady=10)
+
+    def start_game(self):
         self.transition_shown = False
         self.show_game_screen()
         self.run_next_trial()
@@ -133,10 +171,11 @@ class ColorReactionGame(tk.Tk):
     def show_game_screen(self):
         self.clear_container()
 
+        # Top Bar
         top_frame = tk.Frame(self.container, bg=COLOR_BG)
-        top_frame.pack(fill="x", padx=30, pady=15)
+        top_frame.pack(fill="x", padx=30, pady=12)
 
-        self.pid_display = tk.Label(top_frame, text=f"ID: {self.game_logic.participant_id}", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_BG)
+        self.pid_display = tk.Label(top_frame, text=f"Participant: {self.game_logic.participant_id}", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_BG)
         self.pid_display.pack(side="left")
 
         self.trial_label = tk.Label(top_frame, text="Trial 0/20", font=FONT_HEADING, fg=COLOR_TEXT, bg=COLOR_BG)
@@ -145,37 +184,46 @@ class ColorReactionGame(tk.Tk):
         self.condition_label = tk.Label(top_frame, text="Condition: -", font=FONT_BODY, fg=COLOR_ACCENT, bg=COLOR_BG)
         self.condition_label.pack(side="right")
 
-        self.progress = ttk.Progressbar(self.container, length=790, mode="determinate")
-        self.progress.pack(pady=5)
+        self.progress = ttk.Progressbar(self.container, length=860, mode="determinate")
+        self.progress.pack(pady=4)
 
-        self.card = Card(self.container)
-        self.card.pack(fill="both", expand=True, padx=30, pady=10)
+        # Main Workspace Split into Left Stack Window and Right Action Area
+        main_workspace = tk.Frame(self.container, bg=COLOR_BG)
+        main_workspace.pack(fill="both", expand=True, padx=30, pady=8)
+
+        # Left-Down Window (Trial History Stack)
+        self.history_stack = TrialHistoryStack(main_workspace, width=220)
+        self.history_stack.pack(side="left", fill="y", padx=(0, 15), pady=5)
+
+        # Center/Right Play Area Card
+        self.card = Card(main_workspace)
+        self.card.pack(side="right", fill="both", expand=True, pady=5)
 
         self.center_frame = tk.Frame(self.card, bg=COLOR_CARD)
         self.center_frame.pack(expand=True)
 
-        self.swatch_box = tk.Canvas(self.center_frame, width=180, height=100, bg=COLOR_CARD, highlightthickness=0)
-        self.swatch_box.pack(pady=5)
+        self.swatch_box = tk.Canvas(self.center_frame, width=180, height=90, bg=COLOR_CARD, highlightthickness=0)
+        self.swatch_box.pack(pady=4)
 
         self.stimulus_label = tk.Label(self.center_frame, text="", font=FONT_WORD, bg=COLOR_CARD)
-        self.stimulus_label.pack(pady=5)
+        self.stimulus_label.pack(pady=4)
 
         self.feedback_label = tk.Label(self.card, text="", font=FONT_HEADING, bg=COLOR_CARD)
-        self.feedback_label.pack(pady=10)
+        self.feedback_label.pack(pady=6)
 
-        self.buttons_frame = tk.Frame(self.container, bg=COLOR_BG)
-        self.buttons_frame.pack(pady=(10, 25))
+        self.buttons_frame = tk.Frame(self.card, bg=COLOR_CARD)
+        self.buttons_frame.pack(pady=(5, 15))
 
         self.swatch_buttons = []
         for i in range(1, 7):
             btn = ColorSwatchButton(
                 self.buttons_frame,
                 command=self.handle_color_click,
-                width=110, height=55, position_num=i
+                width=100, height=50, position_num=i
             )
             grid_row = 0 if i <= 3 else 1
             grid_col = (i - 1) % 3
-            btn.grid(row=grid_row, column=grid_col, padx=12, pady=8)
+            btn.grid(row=grid_row, column=grid_col, padx=10, pady=6)
             self.swatch_buttons.append(btn)
 
     def show_transition_screen(self):
@@ -184,11 +232,11 @@ class ColorReactionGame(tk.Tk):
         card = Card(self.container)
         card.pack(expand=True, pady=40, padx=50)
 
-        title = tk.Label(card, text="Part 1 Complete!", font=FONT_TITLE, fg="#2ecc71", bg=COLOR_CARD)
+        title = tk.Label(card, text="Part 1 Complete!", font=FONT_TITLE, fg="#2ECC71", bg=COLOR_CARD)
         title.pack(pady=(0, 15))
 
         info_text = (
-            "Great job! You finished the Simple Condition.\n\n"
+            "Great job! You completed the Simple Condition.\n\n"
             "Part 2 (Stroop Condition) is about to begin.\n\n"
             "• Color words will now appear in the center.\n"
             "• Click the button matching the INK COLOR of the word.\n"
@@ -202,7 +250,7 @@ class ColorReactionGame(tk.Tk):
 
         ready_btn = RoundedButton(
             card,
-            text="I'm Ready for Part 2",
+            text="Ready for Part 2 →",
             color=COLOR_ACCENT,
             command=self.start_part_2,
             width=200, height=45
@@ -223,10 +271,10 @@ class ColorReactionGame(tk.Tk):
             self.swatch_buttons[idx].set_color_swatch(name, hex_code)
             self.position_to_color[idx + 1] = name
 
-    def animate_slide_in(self, y_offset=20, step=0):
-        if step <= 5:
-            offset = int(y_offset * (1 - step / 5))
-            self.buttons_frame.pack_configure(pady=(10 + offset, 25))
+    def animate_slide_in(self, y_offset=15, step=0):
+        if step <= 4:
+            offset = int(y_offset * (1 - step / 4))
+            self.buttons_frame.pack_configure(pady=(5 + offset, 15))
             self.after(20, lambda: self.animate_slide_in(y_offset, step + 1))
 
     def reset_center_display(self):
@@ -295,10 +343,18 @@ class ColorReactionGame(tk.Tk):
         record["experience"] = self.experience
         play_sound(record["correct"])
 
+        if self.history_stack:
+            self.history_stack.add_record(
+                record["trial_number"],
+                record["condition"],
+                record["reaction_time_ms"],
+                record["correct"]
+            )
+
         if record["correct"]:
-            self.feedback_label.config(text=f"CORRECT! {record['reaction_time_ms']} ms", fg="#2ecc71")
+            self.feedback_label.config(text=f"CORRECT! {record['reaction_time_ms']} ms", fg="#2ECC71")
         else:
-            self.feedback_label.config(text=f"WRONG! {record['reaction_time_ms']} ms", fg="#e74c3c")
+            self.feedback_label.config(text=f"WRONG! {record['reaction_time_ms']} ms", fg="#E74C3C")
 
         self.after(FEEDBACK_DURATION_MS, self.run_next_trial)
 
@@ -311,7 +367,15 @@ class ColorReactionGame(tk.Tk):
         record["experience"] = self.experience
         play_sound(False)
 
-        self.feedback_label.config(text="TIMEOUT!", fg="#e74c3c")
+        if self.history_stack:
+            self.history_stack.add_record(
+                record["trial_number"],
+                record["condition"],
+                record["reaction_time_ms"],
+                record["correct"]
+            )
+
+        self.feedback_label.config(text="TIMEOUT!", fg="#E74C3C")
         self.after(FEEDBACK_DURATION_MS, self.run_next_trial)
 
     def handle_keypress(self, event):
@@ -334,11 +398,14 @@ class ColorReactionGame(tk.Tk):
         card = Card(self.container)
         card.pack(expand=True, pady=50, padx=50)
 
-        thank_label = tk.Label(card, text="Thank You!", font=FONT_TITLE, fg=COLOR_TEXT, bg=COLOR_CARD)
+        thank_label = tk.Label(card, text="Thank You!", font=FONT_TITLE, fg=COLOR_ACCENT, bg=COLOR_CARD)
         thank_label.pack(pady=15)
 
         msg_label = tk.Label(card, text=f"Experiment Complete.\n{saved_msg}", font=FONT_BODY, fg=COLOR_MUTED, bg=COLOR_CARD)
         msg_label.pack(pady=10)
 
-        restart_btn = RoundedButton(card, text="Main Menu", color=COLOR_ACCENT, command=self.show_start_screen, width=160, height=45)
-        restart_btn.pack(pady=20)   
+        restart_btn = RoundedButton(
+            card, text="Main Menu", color=COLOR_ACCENT,
+            command=self.show_registration_screen, width=160, height=45
+        )
+        restart_btn.pack(pady=20)
