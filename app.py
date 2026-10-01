@@ -4,8 +4,8 @@ from tkinter import ttk, messagebox
 
 from constants import (
     WINDOW_TITLE, WINDOW_WIDTH, WINDOW_HEIGHT, COLOR_BG, COLOR_CARD,
-    COLOR_TEXT, COLOR_MUTED, COLOR_ACCENT, COLOR_BORDER, GAME_COLORS,
-    FONT_TITLE, FONT_HEADING, FONT_BODY, FONT_WORD, FONT_TIP, FUNNY_TIP,
+    COLOR_TEXT, COLOR_MUTED, COLOR_PRIMARY, COLOR_ACCENT, COLOR_PINK, COLOR_BORDER,
+    GAME_COLORS, FONT_TITLE, FONT_HEADING, FONT_BODY, FONT_WORD, FONT_TIP, FUNNY_TIP,
     TOTAL_TRIALS, SIMPLE_TRIALS, MIN_DELAY_MS, MAX_DELAY_MS, TIMEOUT_MS,
     FEEDBACK_DURATION_MS, AGE_GROUPS
 )
@@ -49,7 +49,7 @@ class ColorReactionGame(tk.Tk):
         card = Card(self.container)
         card.pack(expand=True, pady=40, padx=60)
 
-        title = tk.Label(card, text="Participant Registration", font=FONT_TITLE, fg=COLOR_ACCENT, bg=COLOR_CARD)
+        title = tk.Label(card, text="Participant Registration", font=FONT_TITLE, fg=COLOR_PRIMARY, bg=COLOR_CARD)
         title.pack(pady=(0, 20))
 
         form_frame = tk.Frame(card, bg=COLOR_CARD)
@@ -59,47 +59,47 @@ class ColorReactionGame(tk.Tk):
         pid_label = tk.Label(form_frame, text="Participant ID:", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD)
         pid_label.grid(row=0, column=0, sticky="e", padx=10, pady=10)
 
-        self.pid_entry = tk.Entry(form_frame, font=FONT_BODY, width=20, bg="#F9F8F5", fg=COLOR_TEXT, relief="solid", bd=1)
+        self.pid_entry = tk.Entry(form_frame, font=FONT_BODY, width=22, bg="#FFFDF7", fg=COLOR_TEXT, relief="solid", bd=1)
         self.pid_entry.grid(row=0, column=1, sticky="w", padx=10, pady=10)
         self.pid_entry.focus()
 
-        # Age Group Dropdown
+        # Age Group Dropdown (wide enough for text)
         age_label = tk.Label(form_frame, text="Age Group:", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD)
         age_label.grid(row=1, column=0, sticky="e", padx=10, pady=10)
 
         style = ttk.Style()
         style.theme_use('clam')
-        style.configure('Custom.TCombobox', fieldbackground='#F9F8F5', background=COLOR_ACCENT, font=FONT_BODY)
+        style.configure('Custom.TCombobox', fieldbackground='#FFFDF7', background=COLOR_PRIMARY, font=FONT_BODY)
 
         self.age_combo = ttk.Combobox(
             form_frame,
             values=AGE_GROUPS,
             state="readonly",
             style='Custom.TCombobox',
-            width=18
+            width=20
         )
         self.age_combo.grid(row=1, column=1, sticky="w", padx=10, pady=10)
         self.age_combo.current(0)
 
-        # Experience Question (Radio buttons unselected on open)
+        # Experience Question (Neither radio button selected on initial render)
         exp_label = tk.Label(form_frame, text="Have you played before?", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD)
         exp_label.grid(row=2, column=0, sticky="e", padx=10, pady=10)
 
         exp_radio_frame = tk.Frame(form_frame, bg=COLOR_CARD)
         exp_radio_frame.grid(row=2, column=1, sticky="w", padx=10, pady=10)
 
-        self.exp_var = tk.StringVar(value="NONE")
+        self.exp_var = tk.StringVar(value="")
 
         rb_yes = tk.Radiobutton(
             exp_radio_frame, text="Yes", value="Yes", variable=self.exp_var,
-            tristatevalue="NONE", bg=COLOR_CARD, fg=COLOR_TEXT, selectcolor=COLOR_CARD,
+            tristatevalue="UNSET", bg=COLOR_CARD, fg=COLOR_TEXT, selectcolor=COLOR_CARD,
             activebackground=COLOR_CARD, activeforeground=COLOR_TEXT, font=FONT_BODY
         )
         rb_yes.pack(side="left", padx=8)
 
         rb_no = tk.Radiobutton(
             exp_radio_frame, text="No", value="No", variable=self.exp_var,
-            tristatevalue="NONE", bg=COLOR_CARD, fg=COLOR_TEXT, selectcolor=COLOR_CARD,
+            tristatevalue="UNSET", bg=COLOR_CARD, fg=COLOR_TEXT, selectcolor=COLOR_CARD,
             activebackground=COLOR_CARD, activeforeground=COLOR_TEXT, font=FONT_BODY
         )
         rb_no.pack(side="left", padx=8)
@@ -108,7 +108,7 @@ class ColorReactionGame(tk.Tk):
         self.error_label.pack(pady=5)
 
         next_btn = RoundedButton(
-            card, text="Next: Instructions →", color=COLOR_ACCENT,
+            card, text="Next: Instructions →", color=COLOR_PRIMARY, hover_color=COLOR_ACCENT,
             command=self.validate_registration, width=200, height=45
         )
         next_btn.pack(pady=15)
@@ -136,7 +136,7 @@ class ColorReactionGame(tk.Tk):
         card = Card(self.container)
         card.pack(expand=True, pady=30, padx=50)
 
-        title = tk.Label(card, text="How to Play & Game Rules", font=FONT_TITLE, fg=COLOR_ACCENT, bg=COLOR_CARD)
+        title = tk.Label(card, text="How to Play & Game Rules", font=FONT_TITLE, fg=COLOR_PRIMARY, bg=COLOR_CARD)
         title.pack(pady=(0, 15))
 
         instructions = (
@@ -151,14 +151,14 @@ class ColorReactionGame(tk.Tk):
         info_label = tk.Label(card, text=instructions, font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD, justify="left")
         info_label.pack(pady=10)
 
-        tip_card = tk.Frame(card, bg="#F2EFF8", highlightbackground=COLOR_BORDER, highlightthickness=1, padx=15, pady=10)
+        tip_card = tk.Frame(card, bg="#FFF8EC", highlightbackground=COLOR_BORDER, highlightthickness=1, padx=15, pady=10)
         tip_card.pack(fill="x", pady=15)
 
-        tip_label = tk.Label(tip_card, text=FUNNY_TIP, font=FONT_TIP, fg=COLOR_ACCENT, bg="#F2EFF8")
+        tip_label = tk.Label(tip_card, text=FUNNY_TIP, font=FONT_TIP, fg=COLOR_PRIMARY, bg="#FFF8EC")
         tip_label.pack()
 
         start_btn = RoundedButton(
-            card, text="Begin Game", color=COLOR_ACCENT,
+            card, text="Begin Game", color=COLOR_PRIMARY, hover_color=COLOR_ACCENT,
             command=self.start_game, width=180, height=45
         )
         start_btn.pack(pady=10)
@@ -171,7 +171,7 @@ class ColorReactionGame(tk.Tk):
     def show_game_screen(self):
         self.clear_container()
 
-        # Top Bar
+        # Top Information Bar
         top_frame = tk.Frame(self.container, bg=COLOR_BG)
         top_frame.pack(fill="x", padx=30, pady=12)
 
@@ -181,23 +181,31 @@ class ColorReactionGame(tk.Tk):
         self.trial_label = tk.Label(top_frame, text="Trial 0/20", font=FONT_HEADING, fg=COLOR_TEXT, bg=COLOR_BG)
         self.trial_label.pack(side="left", expand=True)
 
-        self.condition_label = tk.Label(top_frame, text="Condition: -", font=FONT_BODY, fg=COLOR_ACCENT, bg=COLOR_BG)
+        self.condition_label = tk.Label(top_frame, text="Condition: -", font=FONT_BODY, fg=COLOR_PRIMARY, bg=COLOR_BG)
         self.condition_label.pack(side="right")
 
-        self.progress = ttk.Progressbar(self.container, length=860, mode="determinate")
+        self.progress = ttk.Progressbar(self.container, length=880, mode="determinate")
         self.progress.pack(pady=4)
 
-        # Main Workspace Split into Left Stack Window and Right Action Area
+        # Main Layout: Left-Down Side Record Window + Right Play Card
         main_workspace = tk.Frame(self.container, bg=COLOR_BG)
         main_workspace.pack(fill="both", expand=True, padx=30, pady=8)
 
-        # Left-Down Window (Trial History Stack)
-        self.history_stack = TrialHistoryStack(main_workspace, width=220)
-        self.history_stack.pack(side="left", fill="y", padx=(0, 15), pady=5)
+        # Left Column Container (holds records stacked strictly in the bottom-left corner)
+        left_column = tk.Frame(main_workspace, bg=COLOR_BG, width=220)
+        left_column.pack(side="left", fill="y", padx=(0, 15))
+        left_column.pack_propagate(False)
 
-        # Center/Right Play Area Card
+        # Spacer pushes the history window strictly to the bottom-left
+        left_spacer = tk.Frame(left_column, bg=COLOR_BG)
+        left_spacer.pack(side="top", expand=True, fill="both")
+
+        self.history_stack = TrialHistoryStack(left_column)
+        self.history_stack.pack(side="bottom", fill="x", anchor="sw")
+
+        # Right Action Card
         self.card = Card(main_workspace)
-        self.card.pack(side="right", fill="both", expand=True, pady=5)
+        self.card.pack(side="right", fill="both", expand=True, pady=0)
 
         self.center_frame = tk.Frame(self.card, bg=COLOR_CARD)
         self.center_frame.pack(expand=True)
@@ -219,7 +227,7 @@ class ColorReactionGame(tk.Tk):
             btn = ColorSwatchButton(
                 self.buttons_frame,
                 command=self.handle_color_click,
-                width=100, height=50, position_num=i
+                width=105, height=52, position_num=i
             )
             grid_row = 0 if i <= 3 else 1
             grid_col = (i - 1) % 3
@@ -245,13 +253,13 @@ class ColorReactionGame(tk.Tk):
         info_label = tk.Label(card, text=info_text, font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD, justify="center")
         info_label.pack(pady=10)
 
-        tip_label = tk.Label(card, text=FUNNY_TIP, font=FONT_TIP, fg=COLOR_ACCENT, bg=COLOR_CARD)
+        tip_label = tk.Label(card, text=FUNNY_TIP, font=FONT_TIP, fg=COLOR_PRIMARY, bg=COLOR_CARD)
         tip_label.pack(pady=15)
 
         ready_btn = RoundedButton(
             card,
             text="Ready for Part 2 →",
-            color=COLOR_ACCENT,
+            color=COLOR_PRIMARY, hover_color=COLOR_ACCENT,
             command=self.start_part_2,
             width=200, height=45
         )
@@ -398,14 +406,14 @@ class ColorReactionGame(tk.Tk):
         card = Card(self.container)
         card.pack(expand=True, pady=50, padx=50)
 
-        thank_label = tk.Label(card, text="Thank You!", font=FONT_TITLE, fg=COLOR_ACCENT, bg=COLOR_CARD)
+        thank_label = tk.Label(card, text="Thank You!", font=FONT_TITLE, fg=COLOR_PRIMARY, bg=COLOR_CARD)
         thank_label.pack(pady=15)
 
         msg_label = tk.Label(card, text=f"Experiment Complete.\n{saved_msg}", font=FONT_BODY, fg=COLOR_MUTED, bg=COLOR_CARD)
         msg_label.pack(pady=10)
 
         restart_btn = RoundedButton(
-            card, text="Main Menu", color=COLOR_ACCENT,
+            card, text="Main Menu", color=COLOR_PRIMARY, hover_color=COLOR_ACCENT,
             command=self.show_registration_screen, width=160, height=45
         )
         restart_btn.pack(pady=20)

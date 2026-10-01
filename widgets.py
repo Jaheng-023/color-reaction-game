@@ -1,7 +1,7 @@
 import tkinter as tk
 from constants import (
     COLOR_CARD, COLOR_BORDER, COLOR_TEXT, COLOR_MUTED,
-    COLOR_DISABLED, COLOR_ACCENT, COLOR_HIGHLIGHT, FONT_BUTTON
+    COLOR_DISABLED, COLOR_PRIMARY, COLOR_ACCENT, COLOR_PINK, FONT_BUTTON
 )
 
 class Card(tk.Frame):
@@ -20,7 +20,7 @@ class Card(tk.Frame):
         )
 
 class RoundedButton(tk.Canvas):
-    def __init__(self, parent, text="", color=COLOR_ACCENT, hover_color=COLOR_HIGHLIGHT, command=None, width=180, height=45, corner_radius=10):
+    def __init__(self, parent, text="", color=COLOR_PRIMARY, hover_color=COLOR_ACCENT, command=None, width=180, height=45, corner_radius=10):
         super().__init__(parent, width=width, height=height, bg=parent["bg"], highlightthickness=0)
         self.command = command
         self.base_color = color
@@ -75,7 +75,7 @@ class RoundedButton(tk.Canvas):
             self.command()
 
 class ColorSwatchButton(tk.Canvas):
-    def __init__(self, parent, command=None, width=110, height=55, corner_radius=10, position_num=1):
+    def __init__(self, parent, command=None, width=105, height=52, corner_radius=10, position_num=1):
         super().__init__(parent, width=width, height=height, bg=parent["bg"], highlightthickness=0)
         self.command = command
         self.color_name = ""
@@ -145,13 +145,13 @@ class TrialHistoryStack(tk.Frame):
             self,
             text="Recent Trials (Last 5)",
             font=("Segoe UI", 10, "bold"),
-            fg=COLOR_ACCENT,
+            fg=COLOR_PRIMARY,
             bg=COLOR_CARD
         )
-        self.title_label.pack(anchor="w", pady=(0, 6))
+        self.title_label.pack(anchor="w", pady=(0, 4))
 
         self.history_frame = tk.Frame(self, bg=COLOR_CARD)
-        self.history_frame.pack(fill="both", expand=True)
+        self.history_frame.pack(fill="x", expand=True)
         self.records = []
         self.update_display()
 
@@ -177,7 +177,7 @@ class TrialHistoryStack(tk.Frame):
         if not self.records:
             empty_lbl = tk.Label(
                 self.history_frame,
-                text="No trials recorded yet",
+                text="No trials yet",
                 font=("Segoe UI", 9, "italic"),
                 fg=COLOR_MUTED,
                 bg=COLOR_CARD
@@ -203,7 +203,7 @@ class TrialHistoryStack(tk.Frame):
             rt_lbl = tk.Label(
                 row, text=rt_text,
                 font=("Segoe UI", 9), fg=COLOR_MUTED, bg=COLOR_CARD,
-                width=10, anchor="w"
+                width=9, anchor="w"
             )
             rt_lbl.pack(side="left")
 

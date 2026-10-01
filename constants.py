@@ -1,18 +1,19 @@
 import tkinter.font as tkfont
 
 WINDOW_TITLE = "Color Reaction Time & Stroop Task"
-WINDOW_WIDTH = 920
+WINDOW_WIDTH = 940
 WINDOW_HEIGHT = 700
 
-# Color Palette
-COLOR_BG = "#EFECE3"          # Warm Off-White / Ivory
-COLOR_CARD = "#FFFFFF"        # Pure White Card Surface
-COLOR_TEXT = "#000000"        # Deep Black Text
-COLOR_MUTED = "#555555"       # Muted Dark Gray Text
-COLOR_ACCENT = "#4A70A9"      # Slate Blue Accent
-COLOR_HIGHLIGHT = "#8FABD4"   # Soft Blue Accent
-COLOR_BORDER = "#D0CCC0"      # Subtle Border Tint
-COLOR_DISABLED = "#CCCCCC"    # Disabled State Neutral
+# Color Hunt Palette (425b9a, 76c0ec, fff6dc, ff95a5)
+COLOR_BG = "#FFF6DC"          # Cream / Warm Ivory Background
+COLOR_CARD = "#FFFFFF"        # Pure White Surface
+COLOR_PRIMARY = "#425B9A"     # Deep Blue Primary
+COLOR_ACCENT = "#76C0EC"      # Sky Blue Accent
+COLOR_PINK = "#FF95A5"        # Soft Pink / Coral Accent
+COLOR_TEXT = "#1C2541"        # Dark Navy Text
+COLOR_MUTED = "#6C7A89"       # Muted Gray Text
+COLOR_BORDER = "#E5DCBE"      # Border Tint
+COLOR_DISABLED = "#D1D5DB"    # Neutral Disabled State
 
 GAME_COLORS = {
     "Red": "#E74C3C",
