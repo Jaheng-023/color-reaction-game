@@ -1,12 +1,14 @@
 import tkinter.font as tkfont
 
-WINDOW_TITLE = "Color Reaction Time & Stroop Task"
-WINDOW_WIDTH = 940
-WINDOW_HEIGHT = 700
+WINDOW_TITLE = "ColorRec - Reaction Time & Stroop Task"
+GAME_NAME = "ColorRec"
 
-# Color Hunt Palette (425b9a, 76c0ec, fff6dc, ff95a5)
-COLOR_BG = "#FFF6DC"          # Cream / Warm Ivory Background
-COLOR_CARD = "#FFFFFF"        # Pure White Surface
+WINDOW_WIDTH = 960
+WINDOW_HEIGHT = 720
+
+# Color Hunt Palette
+COLOR_BG = "#FFF6DC"          # Warm Cream Background
+COLOR_CARD = "#FFFFFF"        # Crisp White Surface
 COLOR_PRIMARY = "#425B9A"     # Deep Blue Primary
 COLOR_ACCENT = "#76C0EC"      # Sky Blue Accent
 COLOR_PINK = "#FF95A5"        # Soft Pink / Coral Accent
@@ -24,21 +26,13 @@ GAME_COLORS = {
     "Orange": "#E67E22"
 }
 
-KEY_MAPPINGS = {
-    "1": "Red",
-    "2": "Blue",
-    "3": "Green",
-    "4": "Yellow",
-    "5": "Purple",
-    "6": "Orange"
-}
-
 FONT_FAMILY = "Segoe UI"
+FONT_BRAND = (FONT_FAMILY, 18, "bold")
 FONT_TITLE = (FONT_FAMILY, 22, "bold")
-FONT_HEADING = (FONT_FAMILY, 16, "bold")
+FONT_HEADING = (FONT_FAMILY, 15, "bold")
 FONT_BODY = (FONT_FAMILY, 13)
 FONT_BUTTON = (FONT_FAMILY, 13, "bold")
-FONT_WORD = (FONT_FAMILY, 36, "bold")
+FONT_WORD = (FONT_FAMILY, 38, "bold")
 FONT_TIP = (FONT_FAMILY, 12, "italic")
 
 TOTAL_TRIALS = 20
