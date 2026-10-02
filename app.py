@@ -355,7 +355,7 @@ class ColorReactionGame(tk.Tk):
         for btn in self.swatch_buttons:
             btn.set_enabled(enabled)
 
-    def handle_early_click(self, selected_color):
+    def handle_early_click(self, selected_color="None"):
         if self.delay_timer:
             self.after_cancel(self.delay_timer)
             self.delay_timer = None

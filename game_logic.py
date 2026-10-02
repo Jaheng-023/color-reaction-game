@@ -39,11 +39,15 @@ class GameLogic:
     def start_stimulus(self):
         self.start_time = time.time()
 
-    def process_response(self, selected_color):
-        reaction_time = (time.time() - self.start_time) * 1000 if self.start_time > 0 else 2000.0
+    def process_response(self, selected_color, early_click="No"):
+        reaction_time = (time.time() - self.start_time) * 1000 if (self.start_time > 0 and early_click == "No") else 0.0
         condition = self.get_condition()
 
-        if selected_color is None:
+        if early_click == "Yes":
+            correct = False
+            error_type = "Early Click"
+            selected_val = selected_color
+        elif selected_color is None:
             correct = False
             error_type = "Timeout"
             reaction_time = 2000.0
