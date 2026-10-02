@@ -73,18 +73,45 @@ class ColorReactionGame(tk.Tk):
 
         style = ttk.Style()
         style.theme_use('clam')
-        style.configure('Custom.TCombobox', fieldbackground='#FFFDF7', background=COLOR_PRIMARY, font=FONT_BODY)
-        style.configure("Custom.Horizontal.TProgressbar", foreground=COLOR_PRIMARY, background=COLOR_PRIMARY, troughcolor=COLOR_BORDER)
+        
+        style.configure(
+            'Custom.TCombobox',
+            fieldbackground='#FFFDF7',
+            background=COLOR_PRIMARY,
+            foreground=COLOR_TEXT,
+            bordercolor=COLOR_BORDER,
+            darkcolor=COLOR_BORDER,
+            lightcolor=COLOR_BORDER,
+            arrowcolor="#FFFFFF",
+            font=FONT_BODY,
+            padding=6
+        )
+        style.map(
+            'Custom.TCombobox',
+            fieldbackground=[('readonly', '#FFFDF7')],
+            selectbackground=[('readonly', '#FFFDF7')],
+            selectforeground=[('readonly', COLOR_TEXT)]
+        )
+
+        self.option_add('*TCombobox*Listbox.font', FONT_BODY)
+        self.option_add('*TCombobox*Listbox.background', '#FFFDF7')
+        self.option_add('*TCombobox*Listbox.foreground', COLOR_TEXT)
+        self.option_add('*TCombobox*Listbox.selectBackground', COLOR_PRIMARY)
+        self.option_add('*TCombobox*Listbox.selectForeground', '#FFFFFF')
+        self.option_add('*TCombobox*Listbox.relief', 'flat')
+        self.option_add('*TCombobox*Listbox.borderWidth', 0)
 
         self.age_combo = ttk.Combobox(
             form_frame,
             values=AGE_GROUPS,
             state="readonly",
             style='Custom.TCombobox',
-            width=20
+            width=18
         )
+        self.age_combo.set("") 
         self.age_combo.grid(row=1, column=1, sticky="w", padx=10, pady=10)
-        self.age_combo.current(0)
+
+        self.age_combo.bind("<<ComboboxSelected>>", lambda e: self.container.focus())
 
         exp_label = tk.Label(form_frame, text="Have you played before?", font=FONT_BODY, fg=COLOR_TEXT, bg=COLOR_CARD)
         exp_label.grid(row=2, column=0, sticky="e", padx=10, pady=10)
@@ -119,11 +146,14 @@ class ColorReactionGame(tk.Tk):
 
     def validate_registration(self):
         pid = self.pid_entry.get().strip()
-        age = self.age_combo.get()
+        age = self.age_combo.get().strip()
         exp = self.exp_var.get()
 
         if not pid or not pid.isalnum():
             self.error_label.config(text="Please enter a valid alphanumeric ID (e.g., P01)")
+            return
+        if not age:
+            self.error_label.config(text="Please select an Age Group")
             return
         if exp not in ["Yes", "No"]:
             self.error_label.config(text="Please select whether you have played before (Yes / No)")

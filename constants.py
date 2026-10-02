@@ -44,7 +44,7 @@ MAX_DELAY_MS = 3000
 TIMEOUT_MS = 2000
 FEEDBACK_DURATION_MS = 1000
 
-AGE_GROUPS = ["Adolescence", "Teen", "Adult"]
+AGE_GROUPS = ["17 - 19", "20 - 22", "23 - 25"]
 
 RAW_DATA_FILE = "data/ColorReactionGame_RawData.csv"
 STATS_DATA_FILE = "data/ColorReactionGame_SummaryStats.csv"

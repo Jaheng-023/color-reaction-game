@@ -4,18 +4,18 @@ import random
 import statistics
 from datetime import datetime, timedelta
 
-# Participant profiles to simulate realistic trial results
+# Participant profiles using updated age range categories
 PARTICIPANTS = [
-    {"id": "P01", "age_group": "Teen", "experience": "Yes"},
-    {"id": "P02", "age_group": "Adult", "experience": "No"},
-    {"id": "P03", "age_group": "Adolescence", "experience": "Yes"},
-    {"id": "P04", "age_group": "Adult", "experience": "Yes"},
-    {"id": "P05", "age_group": "Teen", "experience": "No"},
-    {"id": "P06", "age_group": "Adolescence", "experience": "No"},
-    {"id": "P07", "age_group": "Adult", "experience": "No"},
-    {"id": "P08", "age_group": "Teen", "experience": "Yes"},
-    {"id": "P09", "age_group": "Adolescence", "experience": "Yes"},
-    {"id": "P10", "age_group": "Adult", "experience": "Yes"}
+    {"id": "P01", "age_group": "17 - 19", "experience": "Yes"},
+    {"id": "P02", "age_group": "20 - 22", "experience": "No"},
+    {"id": "P03", "age_group": "17 - 19", "experience": "Yes"},
+    {"id": "P04", "age_group": "23 - 25", "experience": "Yes"},
+    {"id": "P05", "age_group": "20 - 22", "experience": "No"},
+    {"id": "P06", "age_group": "17 - 19", "experience": "No"},
+    {"id": "P07", "age_group": "23 - 25", "experience": "No"},
+    {"id": "P08", "age_group": "20 - 22", "experience": "Yes"},
+    {"id": "P09", "age_group": "17 - 19", "experience": "Yes"},
+    {"id": "P10", "age_group": "23 - 25", "experience": "Yes"}
 ]
 
 COLORS = ["Red", "Blue", "Green", "Yellow", "Purple", "Orange"]
